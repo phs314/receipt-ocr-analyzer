@@ -1,0 +1,19 @@
+{
+  "filename": "recipt14_bin",
+  "store_name": "동국대 남신학사 리낌",
+  "items": [
+    {
+      "menu": "아재김밥",
+      "price": "3000",
+      "amount": "3000",
+      "quantity": "1"
+    },
+    {
+      "menu": "리라면",
+      "price": "4000",
+      "amount": "4000",
+      "quantity": "1"
+    }
+  ],
+  "total_amount": 7000
+}

@@ -1,0 +1,13 @@
+{
+  "filename": "recipt17_bin",
+  "store_name": "동국대학교소비자생혹-별동조합",
+  "items": [
+    {
+      "menu": "훈지독수",
+      "price": "4500",
+      "amount": "4500",
+      "quantity": "1"
+    }
+  ],
+  "total_amount": 4500
+}

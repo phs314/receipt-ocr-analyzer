@@ -1,0 +1,13 @@
+{
+  "filename": "recipt16_bin",
+  "store_name": "동국대학교소비자생환-협도조합",
+  "items": [
+    {
+      "menu": "훔치목수",
+      "price": "4500",
+      "amount": "4500",
+      "quantity": "1"
+    }
+  ],
+  "total_amount": 4500
+}

@@ -1,0 +1,13 @@
+{
+  "filename": "recipt2_bin",
+  "store_name": "동국학교 플바켓",
+  "items": [
+    {
+      "menu": "ICE 카페라떼",
+      "price": "2700",
+      "amount": "2700",
+      "quantity": "1"
+    }
+  ],
+  "total_amount": 2700
+}

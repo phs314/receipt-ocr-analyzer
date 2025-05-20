@@ -1,0 +1,13 @@
+{
+  "filename": "recipt8_bin",
+  "store_name": "동국대학교소비지생활협동조합",
+  "items": [
+    {
+      "menu": "명다처만 단 가 수량 금 액",
+      "price": "6500",
+      "amount": "6500",
+      "quantity": "1"
+    }
+  ],
+  "total_amount": 6500
+}

@@ -1,0 +1,13 @@
+{
+  "filename": "recipt13_bin",
+  "store_name": "동국대학교 플/섯",
+  "items": [
+    {
+      "menu": "ICE 카페라떼",
+      "price": "2700",
+      "amount": "2700",
+      "quantity": "1"
+    }
+  ],
+  "total_amount": 2700
+}

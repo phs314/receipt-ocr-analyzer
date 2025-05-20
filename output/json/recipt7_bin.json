@@ -1,0 +1,13 @@
+{
+  "filename": "recipt7_bin",
+  "store_name": "중국대 화교소비자생#현동조합",
+  "items": [
+    {
+      "menu": "데리야끼치권출밥",
+      "price": "5000",
+      "amount": "5000",
+      "quantity": "1"
+    }
+  ],
+  "total_amount": 5000
+}

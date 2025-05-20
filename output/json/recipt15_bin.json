@@ -1,0 +1,19 @@
+{
+  "filename": "recipt15_bin",
+  "store_name": "총금액 남학 리늄",
+  "items": [
+    {
+      "menu": "야재리밥",
+      "price": "3000",
+      "amount": "3000",
+      "quantity": "1"
+    },
+    {
+      "menu": "리라면",
+      "price": "4000",
+      "amount": "4000",
+      "quantity": "1"
+    }
+  ],
+  "total_amount": 7000
+}

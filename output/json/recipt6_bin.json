@@ -1,0 +1,19 @@
+{
+  "filename": "recipt6_bin",
+  "store_name": "ccpsket",
+  "items": [
+    {
+      "menu": "순가로로코국제로요구름트",
+      "price": "2500",
+      "amount": "2500",
+      "quantity": "1"
+    },
+    {
+      "menu": "80, 오개중퓨교중대로망큼3j00",
+      "price": "1213",
+      "amount": "3637",
+      "quantity": "3"
+    }
+  ],
+  "total_amount": 6137
+}

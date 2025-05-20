@@ -1,0 +1,31 @@
+{
+  "filename": "receipt9",
+  "store_name": "czpsket",
+  "items": [
+    {
+      "menu": "센키스트허나유자켓280m|",
+      "price": "2000",
+      "amount": "2000",
+      "quantity": "1"
+    },
+    {
+      "menu": "80r003276요주장살-@염",
+      "price": "260",
+      "amount": "1300",
+      "quantity": "5"
+    },
+    {
+      "menu": "아입이 박얼음컵2309",
+      "price": "900",
+      "amount": "900",
+      "quantity": "1"
+    },
+    {
+      "menu": "인절미맛마시논렉수340m]",
+      "price": "500",
+      "amount": "1500",
+      "quantity": "3"
+    }
+  ],
+  "total_amount": 5700
+}

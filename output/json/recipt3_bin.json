@@ -1,0 +1,13 @@
+{
+  "filename": "recipt3_bin",
+  "store_name": "[ 영 수 종 1",
+  "items": [
+    {
+      "menu": "*식권7000",
+      "price": "7000",
+      "amount": "7000",
+      "quantity": "1"
+    }
+  ],
+  "total_amount": 7000
+}
