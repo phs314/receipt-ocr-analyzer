@@ -1,6 +1,13 @@
 {
   "filename": "recipt5_bin",
-  "store_name": "총금액 남산렉 리계",
-  "items": [],
-  "total_amount": 0
+  "store_name": "동국대 남산학사 리김밥",
+  "items": [
+    {
+      "menu": "눈꽃치즈라볶이",
+      "price": "6",
+      "amount": "500",
+      "quantity": "83"
+    }
+  ],
+  "total_amount": 500
 }

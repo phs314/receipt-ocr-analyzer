@@ -1,15 +1,15 @@
 {
   "filename": "receipt1",
-  "store_name": "동국대화교소비자생 환협동조합",
+  "store_name": "동국대학교소비자생활협동조합",
   "items": [
     {
-      "menu": "언치즈손밥",
+      "menu": "콘치즈솥밥",
       "price": "5000",
       "amount": "5000",
       "quantity": "1"
     },
     {
-      "menu": "삼경김치철만",
+      "menu": "삼겹김치철판",
       "price": "6000",
       "amount": "6000",
       "quantity": "1"

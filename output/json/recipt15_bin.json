@@ -1,9 +1,9 @@
 {
   "filename": "recipt15_bin",
-  "store_name": "총금액 남학 리늄",
+  "store_name": "동국대 남산학사 리김밥",
   "items": [
     {
-      "menu": "야재리밥",
+      "menu": "야채김밥",
       "price": "3000",
       "amount": "3000",
       "quantity": "1"

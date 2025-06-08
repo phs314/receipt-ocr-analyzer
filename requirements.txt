@@ -1,0 +1,16 @@
+# OCR 및 이미지 처리
+easyocr>=1.7.0
+pillow>=9.0.0
+opencv-python>=4.5.0
+numpy>=1.20.0
+
+# 텍스트 처리 및 정규화
+python-Levenshtein>=0.12.0
+regex>=2022.1.18
+
+# 데이터 구조화 및 처리
+pandas>=1.4.0
+tqdm>=4.62.0
+
+# 유틸리티
+matplotlib>=3.5.0

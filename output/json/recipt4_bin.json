@@ -1,6 +1,13 @@
 {
   "filename": "recipt4_bin",
-  "store_name": "동국대화교소비자생 n최조합",
-  "items": [],
-  "total_amount": 0
+  "store_name": "동국대학교소비자생활협동조합",
+  "items": [
+    {
+      "menu": "치즈불닭철판",
+      "price": "6500",
+      "amount": "6000",
+      "quantity": "0"
+    }
+  ],
+  "total_amount": 6000
 }

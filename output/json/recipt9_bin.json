@@ -1,13 +1,19 @@
 {
   "filename": "recipt9_bin",
-  "store_name": "ccpsket",
+  "store_name": "coopsket",
   "items": [
     {
-      "menu": "쓰키스트러나유자켓2g0ml",
-      "price": "2000",
+      "menu": "썬키스트허니유자펫280ml",
+      "price": "0",
       "amount": "2000",
+      "quantity": "1"
+    },
+    {
+      "menu": "아임이)빅얼음컵230g",
+      "price": "900",
+      "amount": "900",
       "quantity": "1"
     }
   ],
-  "total_amount": 2000
+  "total_amount": 2900
 }

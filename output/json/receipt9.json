@@ -1,31 +1,25 @@
 {
   "filename": "receipt9",
-  "store_name": "czpsket",
+  "store_name": "coopsket",
   "items": [
     {
-      "menu": "센키스트허나유자켓280m|",
-      "price": "2000",
+      "menu": "썬키스트허니유자펫280ml",
+      "price": "0",
       "amount": "2000",
       "quantity": "1"
     },
     {
-      "menu": "80r003276요주장살-@염",
-      "price": "260",
-      "amount": "1300",
-      "quantity": "5"
-    },
-    {
-      "menu": "아입이 박얼음컵2309",
+      "menu": "아임이)빅얼음컵230g",
       "price": "900",
       "amount": "900",
       "quantity": "1"
     },
     {
-      "menu": "인절미맛마시논렉수340m]",
+      "menu": "인절미맛마시는빙수340ml",
       "price": "500",
       "amount": "1500",
       "quantity": "3"
     }
   ],
-  "total_amount": 5700
+  "total_amount": 4400
 }

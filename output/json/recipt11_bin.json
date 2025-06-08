@@ -1,6 +1,13 @@
 {
   "filename": "recipt11_bin",
-  "store_name": "동국대 남신학사 리낌",
-  "items": [],
-  "total_amount": 0
+  "store_name": "동국대 남산학사 리김밥",
+  "items": [
+    {
+      "menu": "리라면",
+      "price": "1",
+      "amount": "11111",
+      "quantity": "41"
+    }
+  ],
+  "total_amount": 11111
 }

@@ -1,5 +1,6 @@
 import re
 import os
+import json
 import Levenshtein
 
 """
@@ -12,7 +13,13 @@ import Levenshtein
 class TextPostProcessor:
     def __init__(self, dict_path="dictionary.txt"):
         self.dict_path = dict_path
-        self.dictionary = self.load_dictionary(dict_path)
+        self.store_item_path = dict_path.endswith('.json')
+        
+        # 파일 타입에 따라 다른 로딩 방식 사용
+        if self.store_item_path:
+            self._load_json_dictionary()
+        else:
+            self._load_text_dictionary()
         
         # 한글 자모 매핑 테이블
         self.chosung_list = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 
@@ -24,19 +31,75 @@ class TextPostProcessor:
                               'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
         
         print(f"텍스트 후처리기 초기화 완료")
-    
-    def load_dictionary(self, dict_path):
-        dictionary = []
+
+    def _load_text_dictionary(self):
+        """텍스트 파일 로딩 - dictionary만 생성"""
+        self.stores_dict = {}
         try:
-            if os.path.exists(dict_path):
-                with open(dict_path, 'r', encoding='utf-8') as f:
-                    dictionary = [line.strip() for line in f if line.strip()]  # 공백 줄 제외하고 로드
-                print(f"{len(dictionary)}개 단어 로드됨")
-            else:
-                print(f"사전 파일 없음: {dict_path}")
+            with open(self.dict_path, 'r', encoding='utf-8') as f:
+                self.dictionary = [line.strip() for line in f if line.strip()]
+            print(f"{len(self.dictionary)}개 단어 로드됨")
         except Exception as e:
             print(f"사전 로드 오류: {e}")
-        return dictionary
+            self.dictionary = []
+
+    def _load_json_dictionary(self):
+        """JSON 파일 로딩 - stores_dict만 생성"""
+        self.dictionary = []
+        try:
+            with open(self.dict_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                self.stores_dict = data.get("stores", {})
+            print(f"{len(self.stores_dict)}개 가게 정보 로드됨")
+        except Exception as e:
+            print(f"JSON 사전 로드 오류: {e}")
+            self.stores_dict = {}
+
+    def load_dictionary(self, dict_path):
+        """기존 호환성을 위한 메서드"""
+        return self._load_text_dictionary() if dict_path.endswith('.txt') else self._load_json_dictionary()
+
+    def find_best_store_match(self, target, threshold=0.4):
+        """가게명에서 가장 유사한 매치 찾기 (JSON 전용)"""
+        if not self.store_item_path or not self.stores_dict:
+            return None, 0
+            
+        best_match = None
+        max_similarity = 0
+        
+        for store_name in self.stores_dict.keys():
+            if abs(len(target) - len(store_name)) > len(target) / 2:
+                continue
+
+            similarity = self.calculate_jamo_similarity(target, store_name)
+            if similarity > max_similarity:
+                max_similarity = similarity
+                best_match = store_name
+            elif similarity == max_similarity and len(store_name) > len(best_match or ""):
+                best_match = store_name
+        
+        return (best_match, max_similarity) if max_similarity >= threshold else (None, 0)
+
+    def find_best_item_match(self, target, store_name, threshold=0.4):
+        """특정 가게의 메뉴에서 가장 유사한 매치 찾기 (JSON 전용)"""
+        if not self.store_item_path or not self.stores_dict or store_name not in self.stores_dict:
+            return None, 0
+            
+        items_list = self.stores_dict[store_name].get("items", [])
+        best_match = None
+        max_similarity = 0
+        
+        for item in items_list:
+            if abs(len(target) - len(item)) > len(target) / 2:
+                continue
+            similarity = self.calculate_jamo_similarity(target, item)
+            if similarity > max_similarity:
+                max_similarity = similarity
+                best_match = item
+            elif similarity == max_similarity and len(item) > len(best_match or ""):
+                best_match = item
+        
+        return (best_match, max_similarity) if max_similarity >= threshold else (None, 0)
     
     def decompose_hangul(self, text):
         result = []
@@ -106,6 +169,16 @@ class TextPostProcessor:
         text = re.sub(r'(\d*[,\.])O(\d*)', r'\g<1>0\g<2>', text)  # 콤마/점 뒤 O → 0
         text = re.sub(r'(\d*)U(\d*)', r'\g<1>0\g<2>', text)  # U → 0
         
+        # process_text2에서 추가된 패턴들
+        text = re.sub(r'(\d*)E(\d*)', r'\g<1>0\g<2>', text)  # E → 0
+        text = re.sub(r'(\d+)E\b', r'\g<1>0', text)  # 끝자리 E → 0
+        text = re.sub(r'\bE(\d+)', r'0\g<1>', text)  # 첫자리 E → 0
+        text = re.sub(r'(\d*[,\.])E(\d*)', r'\g<1>0\g<2>', text)  # 콤마/점 뒤 E → 0
+        text = re.sub(r'(\d*)C(\d*)', r'\g<1>0\g<2>', text)  # C → 0
+        text = re.sub(r'(\d+)C\b', r'\g<1>0', text)  # 끝자리 C → 0
+        text = re.sub(r'\bC(\d+)', r'0\g<1>', text)  # 첫자리 C → 0
+        text = re.sub(r'(\d*[,\.])C(\d*)', r'\g<1>0\g<2>', text)  # 콤마/점 뒤 C → 0
+        
         text = re.sub(r'(\d*)\((\d*)', r'\1\2', text)  # 숫자 주변 괄호 제거
         text = re.sub(r'(\d*)\)(\d*)', r'\1\2', text)
         
@@ -148,16 +221,18 @@ class TextPostProcessor:
         text = re.sub(r'([^\s]):', r'\1 :', text)  # 콜론 앞 공백 추가
         text = re.sub(r':([^\s])', r': \1', text)  # 콜론 뒤 공백 추가
         
-        # 한글 단어 교정
-        words = text.split()
-        for i, word in enumerate(words):
-            # 숫자가 없고, 한글이 있고, 2글자 이상인 단어만 교정
-            if not re.search(r'\d', word) and re.search(r'[가-힣]', word) and len(word) > 1:
-                closest_word = self.find_closest_word(word)
-                if closest_word:  # 사전에서 유사한 단어를 찾은 경우
-                    words[i] = closest_word
+        # 한글 단어 교정 (텍스트 사전이 있는 경우에만)
+        if hasattr(self, 'dictionary') and self.dictionary:
+            words = text.split()
+            for i, word in enumerate(words):
+                # 숫자가 없고, 한글이 있고, 2글자 이상인 단어만 교정
+                if not re.search(r'\d', word) and re.search(r'[가-힣]', word) and len(word) > 1:
+                    closest_word = self.find_closest_word(word)
+                    if closest_word:  # 사전에서 유사한 단어를 찾은 경우
+                        words[i] = closest_word
+            text = ' '.join(words)
         
-        return ' '.join(words)
+        return text
     
     def merge_number_line(self, lines):
         if len(lines) <= 1:
@@ -187,6 +262,15 @@ class TextPostProcessor:
                 i += 1  # 숫자 줄이 아니면 다음으로
         
         return lines
+
+    def process_lines(self, lines):
+        """
+        줄 리스트를 받아 후처리된 줄 리스트로 반환
+        """
+        processed_lines = [self.process_line(line) for line in lines]
+        processed_lines = self.merge_number_line(processed_lines)
+        print("✅ 텍스트 후처리 완료")
+        return processed_lines
     
     def process_text(self, text):
         lines = text.split('\n')  # 줄 단위로 분리

@@ -1,9 +1,9 @@
 {
   "filename": "recipt3_bin",
-  "store_name": "[ 영 수 종 1",
+  "store_name": "교직원식당",
   "items": [
     {
-      "menu": "*식권7000",
+      "menu": "식권7000",
       "price": "7000",
       "amount": "7000",
       "quantity": "1"
