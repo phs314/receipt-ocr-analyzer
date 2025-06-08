@@ -1,86 +1,289 @@
-# 영수증 OCR 처리 시스템
+# 영수증 OCR 분석기 (Receipt OCR Analyzer)
 
-## 프로젝트 개요
-이 프로젝트는 영수증 이미지를 OCR(광학 문자 인식) 기술을 활용하여 텍스트로 변환하고, 추출된 텍스트에서 가게명과 구매한 상품 정보를 자동으로 식별하여 구조화된 데이터로 제공하는 시스템입니다.
+영수증 이미지에서 텍스트를 추출하고 메뉴 항목과 가격 정보를 구조화된 JSON 형태로 변환하는 도구입니다.
 
 ## 주요 기능
-- **이미지 OCR 처리**: EasyOCR을 이용한 영수증 이미지의 텍스트 추출
-- **텍스트 후처리**: OCR에서 발생하는 오류 수정 및 텍스트 정규화
-- **정보 추출**: 가게명, 상품명, 가격, 수량 등 중요 정보 추출
-- **데이터 구조화**: JSON 형식으로 결과 저장
-- **시각화**: 인식된 텍스트 위치 표시 이미지 생성
 
-## 처리 파이프라인
-1. **이미지 입력**: `input` 폴더에 영수증 이미지 파일 배치
-2. **OCR 처리**: `image_to_text.py`가 이미지에서 텍스트 추출
-3. **텍스트 후처리**: `process_text.py`가 OCR 결과 정규화 및 오류 수정
-4. **정보 추출**: `extract_item.py`가 메뉴 항목, 가격 정보 추출
-5. **JSON 출력**: 구조화된 데이터를 `output/json` 폴더에 저장
+- **이미지 OCR 처리**: 영수증 이미지에서 텍스트 추출
+- **텍스트 후처리**: OCR 오류 보정 및 정규화
+- **메뉴 항목 추출**: 가게명, 메뉴, 가격, 수량 정보 추출
+- **사전 기반 매칭**: 한글 자모 분해를 통한 유사도 계산으로 정확도 향상
+- **JSON 출력**: 구조화된 데이터 형태로 결과 저장
+- **성능 비교**: 다양한 추출 방법 간의 성능 평가
 
-## 폴더 구조
+## 📁 프로젝트 구조
+
 ```
-./
+receipt-ocr-analyzer/
 │
-├── input/                           # 입력 영수증 이미지 폴더
+├── 🚀 메인 실행 파일
+│   └── main.py                    # 전체 파이프라인 실행
 │
-├── output/                          # 출력 결과 폴더
-│   ├── ocr_vis/                     # OCR 시각화 이미지
-│   ├── ocr_raw_txt/                 # OCR 원본 텍스트
-│   ├── ocr_processed_txt/           # 후처리된 텍스트
-│   └── json/                        # 추출된 정보 JSON 파일
+├── 🔧 핵심 처리 모듈
+│   ├── ocr_extract.py             # OCR 텍스트 추출
+│   ├── process_text.py            # 텍스트 후처리 및 사전 매칭
+│   ├── extract_item.py            # 기본 메뉴 항목 추출 (패턴 기반)
+│   └── extract_item2.py           # 개선된 메뉴 항목 추출 (사전 기반)
 │
-├── image_to_text.py                 # 이미지 OCR 모듈
-├── process_text.py                  # 텍스트 후처리 모듈
-├── extract_item.py                  # 정보 추출 모듈
-├── dictionary.txt                   # 영수증 용어 사전
-└── README.md                        # 프로젝트 설명서
+├── 📊 성능 비교 도구
+│   ├── compare_accuracy.py        # 추출 정확도 비교 도구
+│   └── compare_performance.py     # 추출 성능 비교 도구
+│
+├── 📚 사전 관리 도구
+│   ├── dictionary_item.py         # 메뉴 사전 관리 도구
+│   └── dictionary_store.py        # 가게 사전 관리 도구
+│
+├── 📝 사전 파일
+│   ├── dictionary.txt             # 기본 한글 단어 사전
+│   ├── dictionary_item.txt        # 메뉴 사전
+│   ├── dictionary_store.txt       # 가게 사전
+│   └── dictionary_store_item.json # 가게별 메뉴 사전 (개선된 버전용)
+│
+├── 📁 입력 폴더
+│   └── images/                    # 🖼️ 영수증 이미지 파일 (jpg, png, etc.)
+│       ├── receipt_001.jpg
+│       ├── receipt_002.png
+│       └── ...
+│
+└── 📁 출력 폴더
+    └── output/
+        ├── 📄 ocr_raw_txt/        # OCR 원본 텍스트 (.txt)
+        │   ├── receipt_001_raw.txt
+        │   ├── receipt_002_raw.txt
+        │   └── ...
+        │
+        ├── ✨ ocr_processed_txt/   # 후처리된 텍스트 (.txt)
+        │   ├── receipt_001_processed.txt
+        │   ├── receipt_002_processed.txt
+        │   └── ...
+        │
+        └── 📋 json/               # 최종 JSON 결과 (.json)
+            ├── receipt_001.json
+            ├── receipt_002.json
+            └── ...
 ```
+
+## ⚡ 데이터 흐름
+
+```
+🖼️ Images              📄 Raw OCR           ✨ Processed Text      📋 Final JSON
+┌─────────────┐       ┌─────────────┐      ┌─────────────────┐    ┌─────────────┐
+│ receipt.jpg │  ➜    │ receipt.txt │  ➜   │ receipt_proc.txt│ ➜  │ receipt.json│
+│ receipt.png │       │ (OCR 원본)   │      │ (오류 보정됨)     │    │ (구조화됨)   │
+└─────────────┘       └─────────────┘      └─────────────────┘    └─────────────┘
+      ↓                       ↓                       ↓                    ↓
+  ocr_extract.py       process_text.py      extract_item.py        최종 결과
+                                              또는
+                                          extract_item2.py
+```
+
+## 설치 및 설정
+
+### 1. 필수 라이브러리 설치
+
+```bash
+pip install easyocr opencv-python pillow python-levenshtein
+```
+
+### 2. 폴더 구조 준비
+
+```bash
+# 입력 폴더 생성
+mkdir images
+
+# 영수증 이미지를 images/ 폴더에 복사
+cp your_receipts/* images/
+```
+
+### 3. 사전 파일 준비
+
+- `dictionary.txt`: 한글 단어 사전 (텍스트 후처리용)
+- `dictionary_item.txt`: 메뉴 사전 (텍스트 후처리용)
+- `dictionary_store.txt`: 가게 사전 (텍스트 후처리용)
+- `dictionary_store_item.json`: 가게별 메뉴 사전 (개선된 추출용)
 
 ## 사용 방법
-1. `input` 폴더에 처리할 영수증 이미지를 넣습니다.
-2. 각 단계별로 스크립트를 실행합니다:
-   ```
-   python image_to_text.py   # OCR 처리
-   python process_text.py    # 텍스트 후처리
-   python extract_item.py    # 정보 추출
-   ```
-3. 처리 결과는 `output/json` 폴더에서 확인할 수 있습니다.
 
-## 구현 기술
-- **이미지 처리**: PIL(Python Imaging Library) 사용
-- **OCR**: EasyOCR 라이브러리 사용 (한국어, 영어 지원)
-- **텍스트 처리**: 정규표현식과 Levenshtein 거리를 활용한 텍스트 교정
-- **정보 추출**: 패턴 인식 및 컨텍스트 분석
+### 1. 전체 파이프라인 실행
 
-## JSON 출력 예시
+```bash
+python main.py
+```
+
+모든 단계를 순차적으로 실행하여 이미지에서 JSON까지 변환합니다.
+
+### 2. 개별 모듈 실행
+
+#### OCR 텍스트 추출
+
+```bash
+python ocr_extract.py
+# 결과: images/*.jpg → output/ocr_raw_txt/*.txt
+```
+
+#### 텍스트 후처리
+
+```bash
+python process_text.py
+# 결과: output/ocr_raw_txt/*.txt → output/ocr_processed_txt/*.txt
+```
+
+#### 메뉴 항목 추출 (기본 버전)
+
+```bash
+python extract_item.py
+# 결과: output/ocr_processed_txt/*.txt → output/json/*.json
+```
+
+#### 메뉴 항목 추출 (개선된 버전)
+
+```bash
+python extract_item2.py
+# 결과: output/ocr_processed_txt/*.txt → output/json/*.json
+```
+
+### 3. 사전 관리 도구
+
+#### 메뉴 사전 관리
+
+```bash
+python dictionary_item.py
+# 기능: 메뉴 아이템 사전 추가/수정/삭제
+```
+
+#### 가게 사전 관리
+
+```bash
+python dictionary_store.py
+# 기능: 가게 정보 사전 추가/수정/삭제
+```
+
+## 추출 방법 비교
+
+### extract_item.py (기본 버전)
+
+- **방식**: 패턴 기반 추출
+- **특징**: 메뉴명 + 단가 + 금액 패턴 인식
+- **장점**: 빠른 처리 속도, 단순한 구조
+- **단점**: OCR 오류에 취약, 복잡한 형식 처리 어려움
+
+### extract_item2.py (개선된 버전)
+
+- **방식**: 사전 기반 유사도 매칭
+- **사전**: `dictionary_store_item.json` 사용
+- **특징**:
+  - 한글 자모 분해를 통한 유사도 계산
+  - 가게별 메뉴 사전으로 정확도 향상
+  - OCR 오류 보정 강화
+- **장점**: 높은 정확도, 다양한 영수증 형식 지원
+- **단점**: 상대적으로 느린 처리 속도
+
+## 성능 비교 도구
+
+### compare_accuracy.py
+
+```bash
+python compare_accuracy.py
+```
+
+- **기능**: 두 추출 방법의 정확도 비교
+- **비교 항목**:
+  - 가게명 매칭 정확도
+  - 메뉴 항목 수 비교
+  - 총 금액 정확도
+  - 개별 메뉴 매칭률
+- **출력**: 상세한 비교 리포트 생성
+
+### compare_performance.py
+
+```bash
+python compare_performance.py
+```
+
+- **기능**: 두 추출 방법의 성능 비교
+- **측정 항목**:
+  - 처리 시간 비교
+  - 메모리 사용량
+  - 파일별 처리 속도
+  - 전체 처리 효율성
+- **출력**: 성능 벤치마크 결과
+
+## 사전 관리 도구
+
+### dictionary_item.py
+
+- **기능**: 메뉴 아이템 사전 관리
+- **주요 작업**:
+  - 새로운 메뉴 아이템 추가
+  - 기존 메뉴 아이템 수정
+  - 메뉴 아이템 삭제
+  - 사전 데이터 검증
+
+### dictionary_store.py
+
+- **기능**: 가게 정보 사전 관리
+- **주요 작업**:
+  - 새로운 가게 추가
+  - 가게별 메뉴 목록 관리
+  - 가게 정보 수정/삭제
+  - 사전 구조 최적화
+
+## 사전 파일 형식
+
+### dictionary_store_item.json 구조
+
 ```json
 {
-  "filename": "receipt1",
-  "store_name": "동국대화교소비자생 환협동조합",
-  "items": [
-    {
-      "menu": "언치즈손밥",
-      "price": "5000",
-      "amount": "5000",
-      "quantity": "1"
+  "stores": {
+    "맥도날드": {
+      "items": ["빅맥", "치킨맥너겟", "감자튀김", "코카콜라"]
     },
-    {
-      "menu": "삼경김치철만",
-      "price": "6000",
-      "amount": "6000",
-      "quantity": "1"
+    "버거킹": {
+      "items": ["와퍼", "치킨버거", "어니언링", "펩시콜라"]
     }
-  ],
-  "total_amount": 11000
+  }
 }
 ```
 
-## 설치 요구사항
-```
-pip install easyocr pillow python-Levenshtein
+## 출력 형식
+
+### JSON 결과 예시
+
+```json
+{
+  "filename": "receipt_001",
+  "store_name": "맥도날드",
+  "items": [
+    {
+      "menu": "빅맥",
+      "price": "6900",
+      "amount": "6900",
+      "quantity": "1"
+    },
+    {
+      "menu": "감자튀김",
+      "price": "2500",
+      "amount": "5000",
+      "quantity": "2"
+    }
+  ],
+  "total_amount": 11900
+}
 ```
 
-## 향후 개선사항
-- 다양한 영수증 포맷 지원 확장
-- 결제 방법, 할인 정보 등 추가 데이터 추출
-- 웹 인터페이스 구현
+## 알려진 제한사항
+
+- 손글씨 영수증은 인식률이 낮을 수 있습니다
+- 복잡한 레이아웃의 영수증은 정확도가 떨어질 수 있습니다
+- 사전에 없는 가게나 메뉴는 인식되지 않을 수 있습니다
+
+## 개발 환경
+
+- Python 3.8+
+- EasyOCR 1.6+
+- OpenCV 4.0+
+- Levenshtein 0.20+
+
+## 라이센스
+
+MIT License
